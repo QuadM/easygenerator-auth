@@ -138,7 +138,7 @@ export class AxiosHttpClient implements HttpClient {
   async fetchJson<T = unknown>(path: string, options?: RequestInit): Promise<T> {
     const axiosConfig: AxiosRequestConfig = {
       url: path,
-      method: (options?.method as any) || 'GET',
+      method: (options?.method as AxiosRequestConfig['method']) || 'GET',
       headers: options?.headers as Record<string, string>,
       data: options?.body,
     };

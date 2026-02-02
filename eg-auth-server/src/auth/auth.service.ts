@@ -1,4 +1,3 @@
-
 import {
   Injectable,
   UnauthorizedException,
@@ -28,10 +27,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(
-    email: string,
-    pass: string,
-  ): Promise<UserPayload | null> {
+  async validateUser(email: string, pass: string): Promise<UserPayload | null> {
     if (!email || !pass) {
       throw new BadRequestException('Email and password are required');
     }
@@ -46,7 +42,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: UserPayload): Promise<LoginResponse> {
+  login(user: UserPayload): LoginResponse {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }

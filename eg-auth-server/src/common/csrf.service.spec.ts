@@ -12,7 +12,9 @@ jest.mock('csrf-csrf', () => ({
   doubleCsrf: jest.fn(() => ({
     generateCsrfToken: jest.fn(() => 'mock-token'),
     validateRequest: jest.fn(() => true),
-    doubleCsrfProtection: jest.fn((req, res, next) => next()),
+    doubleCsrfProtection: jest.fn(
+      (_req: unknown, _res: unknown, next: () => void) => next(),
+    ),
   })),
 }));
 
@@ -35,14 +37,14 @@ describe('CsrfService', () => {
   });
 
   it('should generate a token', () => {
-    const req = {} as any;
-    const res = {} as any;
+    const req = {} as import('express').Request;
+    const res = {} as import('express').Response;
     const token = service.generateToken(req, res);
     expect(token).toBe('mock-token');
   });
 
   it('should validate a token', () => {
-    const req = {} as any;
+    const req = {} as import('express').Request;
     expect(service.validateToken(req)).toBe(true);
   });
 });

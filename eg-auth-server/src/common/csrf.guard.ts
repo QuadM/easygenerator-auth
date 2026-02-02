@@ -20,8 +20,8 @@ export class CsrfGuard implements CanActivate {
     // Check if CSRF token exists in headers or body
     // Note: The client sends 'x-csrf-token' header, which contains the token value.
     // This matches the validation logic in content/csrf.service.ts
-    const csrfToken = 
-      request.get('x-csrf-token') || 
+    const csrfToken =
+      request.get('x-csrf-token') ||
       (request.body as { csrfToken?: string })?.csrfToken;
 
     if (!csrfToken) {

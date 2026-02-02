@@ -3,7 +3,6 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import { PrismaService } from './prisma/prisma.service';
 import { HttpExceptionFilter } from './common/http-exception.filter';
 import { ConfigService } from './common/config.service';
 import { CsrfService } from './common/csrf.service';
@@ -52,14 +51,19 @@ async function bootstrap() {
   // Swagger Configuration
   const options = new DocumentBuilder()
     .setTitle('EG Auth API')
-    .setDescription('Authentication Service API with JWT, CSRF, and HTTP-only cookies')
+    .setDescription(
+      'Authentication Service API with JWT, CSRF, and HTTP-only cookies',
+    )
     .setVersion('1.0')
     .addTag('auth')
     .addCookieAuth('access_token') // Document that we use cookies
-    .addApiKey({ type: 'apiKey', name: 'X-CSRF-Token', in: 'header' }, 'X-CSRF-Token')
+    .addApiKey(
+      { type: 'apiKey', name: 'X-CSRF-Token', in: 'header' },
+      'X-CSRF-Token',
+    )
     .addSecurityRequirements('X-CSRF-Token')
     .build();
-    
+
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api/docs', app, document);
 

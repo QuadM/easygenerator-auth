@@ -46,9 +46,9 @@ export class ConfigService {
   validateEnvironment(): void {
     // This will throw if any required env vars are missing
     try {
-      this.databaseUrl;
-      this.jwtSecret;
-      this.csrfSecret;
+      void this.databaseUrl;
+      void this.jwtSecret;
+      void this.csrfSecret;
     } catch (error) {
       throw new Error(`Environment validation failed: ${error}`);
     }

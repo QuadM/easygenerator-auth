@@ -39,4 +39,5 @@ export function QueryProvider({ children }: QueryProviderProps) {
 /**
  * Export the query client for use outside of React components
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export { queryClient };

@@ -9,11 +9,13 @@ import {
   HttpStatus,
   Res,
 } from '@nestjs/common';
-import type { Request as ExpressRequest, Response as ExpressResponse } from 'express';
-import { AuthService, UserPayload, LoginResponse } from './auth.service';
+import type {
+  Request as ExpressRequest,
+  Response as ExpressResponse,
+} from 'express';
+import { AuthService, UserPayload } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { CsrfGuard } from '../common/csrf.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import {
@@ -28,13 +30,14 @@ interface AuthenticatedRequest extends ExpressRequest {
   user: UserPayload;
 }
 
-interface JwtAuthenticatedRequest extends ExpressRequest {
-  user: {
-    id: string;
-    username: string;
-  };
+interface JwtAuthenticatedUser {
+  id: string;
+  username: string;
 }
 
+interface JwtAuthenticatedRequest extends ExpressRequest {
+  user: JwtAuthenticatedUser;
+}
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -47,14 +50,15 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @ApiResponse({
     status: 200,
-    description: 'User successfully logged in. Returns JWT token and user info.',
+    description:
+      'User successfully logged in. Returns JWT token and user info.',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async login(
-    @Request() req: any,
+  login(
+    @Request() req: AuthenticatedRequest,
     @Res({ passthrough: true }) res: ExpressResponse,
   ) {
-    const loginResponse = await this.authService.login(req.user);
+    const loginResponse = this.authService.login(req.user);
 
     // Set HttpOnly cookie
     res.cookie('access_token', loginResponse.access_token, {
@@ -106,7 +110,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'User logout' })
   @ApiResponse({ status: 200, description: 'Successfully logged out' })
-  async logout(@Res({ passthrough: true }) res: ExpressResponse) {
+  logout(@Res({ passthrough: true }) res: ExpressResponse) {
     res.clearCookie('access_token');
     return { message: 'Logged out successfully' };
   }
@@ -117,7 +121,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Return current user profile' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  getProfile(@Request() req: any) {
+  getProfile(@Request() req: JwtAuthenticatedRequest): JwtAuthenticatedUser {
     return req.user;
   }
 }

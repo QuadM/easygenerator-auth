@@ -16,7 +16,7 @@ import { ConfigService } from '../common/config.service';
     PassportModule,
     JwtModule.registerAsync({
       imports: [CommonModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         secret: configService.jwtSecret,
         signOptions: { expiresIn: '1h' },
       }),

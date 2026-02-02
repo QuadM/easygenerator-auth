@@ -42,7 +42,9 @@ export class UsersService {
     const exists = await this.findByEmail(email);
     if (exists) {
       this.logger.warn(`Attempt to create duplicate user: ${email}`);
-      throw new ConflictException('An account with that email address already exists.');
+      throw new ConflictException(
+        'An account with that email address already exists.',
+      );
     }
 
     const hashedPassword = await argon2.hash(password, {

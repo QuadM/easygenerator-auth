@@ -6,10 +6,7 @@ test.describe('Authentication Flow', () => {
   });
 
   test('should display sign in and sign up buttons when not authenticated', async ({ page }) => {
-    // Assuming these are in the header navigation
-    const header = page.getByRole('navigation').first().or(page.locator('header'));
-    // If no header, just check if they exist on the page generally but be specific if duplicates exist
-    // For now, let's assume they are unique enough or use first() if we just want to verify existence
+    // Check if sign in and sign up links exist on the page
     await expect(page.getByRole('link', { name: /sign in/i }).first()).toBeVisible();
     await expect(page.getByRole('link', { name: /sign up/i }).first()).toBeVisible();
   });

@@ -33,7 +33,7 @@ export default function SignUp() {
 
   const onSubmit = (data: SignupFormValues) => {
     signup.mutate(data, {
-      onError: (err: any) => {
+      onError: (err: Error & { response?: { data?: { message?: string | string[] } } }) => {
         const message =
           err?.response?.data?.message || err?.message || "Invalid credentials";
         toast.error(Array.isArray(message) ? message[0] : message);

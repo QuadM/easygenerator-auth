@@ -1,6 +1,10 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { AuthService, UserPayload } from './auth.service';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
@@ -19,7 +23,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     const errors = await validate(loginDto);
 
     if (errors.length > 0) {
-      const messages = errors.map((err) => Object.values(err.constraints || {})).flat();
+      const messages = errors
+        .map((err) => Object.values(err.constraints || {}))
+        .flat();
       throw new BadRequestException(messages);
     }
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
@@ -18,7 +19,6 @@ const mockJwtService = {
 
 describe('AuthService', () => {
   let service: AuthService;
-  let usersService: typeof mockUsersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,7 +30,6 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    usersService = module.get(UsersService);
   });
 
   afterEach(() => {
@@ -63,35 +62,56 @@ describe('AuthService', () => {
     });
 
     it('should throw BadRequestException if username or password missing', async () => {
-      await expect(service.validateUser('', 'pass')).rejects.toThrow(BadRequestException);
-      await expect(service.validateUser('user', '')).rejects.toThrow(BadRequestException);
+      await expect(service.validateUser('', 'pass')).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(service.validateUser('user', '')).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
   describe('login', () => {
-    it('should return access token', async () => {
+    it('should return access token', () => {
       const user = { id: '1', email: 'test@mail.com' };
       mockJwtService.sign.mockReturnValue('token');
 
-      const result = await service.login(user);
+      const result = service.login(user);
 
       expect(result).toEqual({ access_token: 'token', user });
-      expect(mockJwtService.sign).toHaveBeenCalledWith({ email: 'test@mail.com', sub: '1' });
+      expect(mockJwtService.sign).toHaveBeenCalledWith({
+        email: 'test@mail.com',
+        sub: '1',
+      });
     });
 
     it('should throw UnauthorizedException if no user provided', async () => {
-      await expect(service.login(null as any)).rejects.toThrow(UnauthorizedException);
+      await expect(service.login(null as any)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 
   describe('signup', () => {
     it('should call usersService.createUser', async () => {
-      const resultUser = { id: '1', email: 'newuser@mail.com', username: 'newuser' };
+      const resultUser = {
+        id: '1',
+        email: 'newuser@mail.com',
+        username: 'newuser',
+      };
       mockUsersService.createUser.mockResolvedValue(resultUser);
       mockJwtService.sign.mockReturnValue('token');
 
-      const result = await service.signup('newuser@mail.com', 'newuser', 'password');
-      expect(mockUsersService.createUser).toHaveBeenCalledWith('newuser@mail.com', 'newuser', 'password');
+      const result = await service.signup(
+        'newuser@mail.com',
+        'newuser',
+        'password',
+      );
+      expect(mockUsersService.createUser).toHaveBeenCalledWith(
+        'newuser@mail.com',
+        'newuser',
+        'password',
+      );
       expect(result).toEqual({ access_token: 'token', user: resultUser });
     });
   });

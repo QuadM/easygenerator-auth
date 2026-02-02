@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/require-await, @typescript-eslint/no-unsafe-return */
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
@@ -27,10 +28,10 @@ describe('AuthController (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
-    
+
     // Enable cookie parser (required for csrf-csrf)
     app.use(require('cookie-parser')());
-    
+
     await app.init();
     prisma = moduleFixture.get(PrismaService);
   });
@@ -49,10 +50,10 @@ describe('AuthController (e2e)', () => {
     it('should create a new user', async () => {
       const csrfToken = await getCsrfToken();
       const createUserDto = { username: 'e2euser', password: 'password123' };
-      
+
       // Mock finding user (not found)
       prisma.user.findUnique.mockResolvedValue(null);
-      
+
       // Mock creating user
       prisma.user.create.mockImplementation(async (args) => ({
         id: '123',
@@ -87,7 +88,7 @@ describe('AuthController (e2e)', () => {
     it('should return JWT token on success', async () => {
       const csrfToken = await getCsrfToken();
       const loginDto = { username: 'existing', password: 'password' };
-      
+
       const hashedPassword = await argon2.hash('password');
       prisma.user.findUnique.mockResolvedValue({
         id: '1',
@@ -110,9 +111,9 @@ describe('AuthController (e2e)', () => {
 
     it('should fail with invalid credentials', async () => {
       const csrfToken = await getCsrfToken();
-       prisma.user.findUnique.mockResolvedValue(null);
+      prisma.user.findUnique.mockResolvedValue(null);
 
-       return request(app.getHttpServer())
+      return request(app.getHttpServer())
         .post('/auth/login')
         .set('x-csrf-token', csrfToken)
         .send({ username: 'unknown', password: 'bad' })
@@ -123,7 +124,7 @@ describe('AuthController (e2e)', () => {
   describe('/auth/profile (GET)', () => {
     it('should return profile for authenticated user', async () => {
       const csrfToken = await getCsrfToken();
-      
+
       // 1. Login to get token
       const hashedPassword = await argon2.hash('password');
       prisma.user.findUnique.mockResolvedValue({
@@ -138,7 +139,7 @@ describe('AuthController (e2e)', () => {
         .post('/auth/login')
         .set('x-csrf-token', csrfToken)
         .send({ username: 'test', password: 'password' });
-      
+
       const token = loginRes.body.access_token;
 
       // 2. Access profile

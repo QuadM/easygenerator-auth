@@ -17,8 +17,8 @@ export class CsrfService {
         // Use a combination of IP and User-Agent as session identifier
         return `${req.ip || 'unknown'}-${req.get('User-Agent') || 'unknown'}`;
       },
-      cookieName: this.configService.isProduction 
-        ? '__Host-psifi.x-csrf-token' 
+      cookieName: this.configService.isProduction
+        ? '__Host-psifi.x-csrf-token'
         : 'psifi.x-csrf-token',
       cookieOptions: {
         httpOnly: true,

@@ -63,7 +63,9 @@ describe('UsersService', () => {
 
     it('should throw NotFoundException if not found', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
-      await expect(service.findById('unknown')).rejects.toThrow('User not found');
+      await expect(service.findById('unknown')).rejects.toThrow(
+        'User not found',
+      );
     });
   });
 
@@ -72,13 +74,22 @@ describe('UsersService', () => {
       const username = 'newuser';
       const password = 'password123';
       const hashedPassword = 'hashed_password123';
-      const createdUser = { id: '1', email: 'newuser@mail.com', username, password: hashedPassword };
+      const createdUser = {
+        id: '1',
+        email: 'newuser@mail.com',
+        username,
+        password: hashedPassword,
+      };
 
       (argon2.hash as jest.Mock).mockResolvedValue(hashedPassword);
       mockPrismaService.user.findUnique.mockResolvedValue(null); // No existing user
       mockPrismaService.user.create.mockResolvedValue(createdUser);
 
-      const result = await service.createUser('newuser@mail.com', username, password);
+      const result = await service.createUser(
+        'newuser@mail.com',
+        username,
+        password,
+      );
 
       expect(argon2.hash).toHaveBeenCalledWith(password, expect.any(Object));
       expect(prisma.user.create).toHaveBeenCalledWith({
@@ -88,9 +99,15 @@ describe('UsersService', () => {
     });
 
     it('should throw ConflictException if user already exists', async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue({ id: '1', email: 'existing@mail.com', username: 'existing' });
-      
-      await expect(service.createUser('existing@mail.com', 'existing', 'pass')).rejects.toThrow('An account with that email address already exists.');
+      mockPrismaService.user.findUnique.mockResolvedValue({
+        id: '1',
+        email: 'existing@mail.com',
+        username: 'existing',
+      });
+
+      await expect(
+        service.createUser('existing@mail.com', 'existing', 'pass'),
+      ).rejects.toThrow('An account with that email address already exists.');
       expect(prisma.user.create).not.toHaveBeenCalled();
     });
   });
