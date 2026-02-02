@@ -85,8 +85,9 @@ describe('AuthService', () => {
       });
     });
 
-    it('should throw UnauthorizedException if no user provided', async () => {
-      await expect(service.login(null as any)).rejects.toThrow(
+
+    it('should throw UnauthorizedException if no user provided', () => {
+      expect(() => service.login(null as unknown as UserPayload)).toThrow(
         UnauthorizedException,
       );
     });
