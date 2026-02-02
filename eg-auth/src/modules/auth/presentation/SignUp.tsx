@@ -63,6 +63,7 @@ export default function SignUp() {
                     id="username"
                     placeholder="John Doe"
                     {...register("username")}
+                    required
                   />
                   {errors.username && (
                     <span className="text-xs text-destructive font-medium">
@@ -79,6 +80,7 @@ export default function SignUp() {
                     type="email"
                     placeholder="m@example.com"
                     {...register("email")}
+                    required
                   />
                   {errors.email && (
                     <span className="text-xs text-destructive font-medium">
@@ -94,6 +96,7 @@ export default function SignUp() {
                     id="password"
                     type="password"
                     {...register("password")}
+                    required
                   />
                   {errors.password && (
                     <span className="text-xs text-destructive font-medium">

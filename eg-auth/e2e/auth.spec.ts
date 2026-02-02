@@ -31,9 +31,10 @@ test.describe('Authentication Flow', () => {
     
     await page.getByLabel(/email/i).fill('invalid-email');
     await page.getByLabel(/password/i).fill('password123');
-    await page.getByRole('button', { name: /login/i }).click();
+    // Button should be disabled due to !isValid check
+    await expect(page.getByRole('button', { name: /login/i })).toBeDisabled();
 
-    // Check for validation error (Zod default: "Invalid email", or our fallback "Invalid credentials")
+    // The validation error text appears immediately on blur/change because of mode: "onChange"
     await expect(page.getByText(/invalid/i)).toBeVisible();
   });
 
@@ -44,8 +45,10 @@ test.describe('Authentication Flow', () => {
     await page.getByLabel(/email/i).fill('test@example.com');
     await page.getByLabel(/password/i).fill('short');
     
+    
     // Scoped to form to avoid header button conflict if any
-    await page.locator('form').getByRole('button', { name: /sign up/i }).click();
+    const submitBtn = page.locator('form').getByRole('button', { name: /sign up/i });
+    await expect(submitBtn).toBeDisabled();
 
     // Zod default for min(8): "String must contain at least 8 character(s)"
     await expect(page.getByText(/at least 8/i)).toBeVisible();

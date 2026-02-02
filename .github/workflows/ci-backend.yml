@@ -3,8 +3,14 @@ name: Backend CI
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'eg-auth-server/**'
+      - '.github/workflows/ci-backend.yml'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'eg-auth-server/**'
+      - '.github/workflows/ci-backend.yml'
 
 env:
   REGISTRY: ghcr.io
@@ -30,6 +36,7 @@ jobs:
       with:
         node-version: 20
         cache: 'pnpm'
+        cache-dependency-path: 'eg-auth-server/pnpm-lock.yaml'
         
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
