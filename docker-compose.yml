@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:6.0
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo:27017'}]}) }" | mongosh --port 27017 --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  eg-auth-server:
+    build:
+      context: ./eg-auth-server
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: mongodb://mongo:27017/eg_auth?replicaSet=rs0&directConnection=true
+      JWT_SECRET: 'SOME_JEWT_SECRETE_EG_AUTH'
+      CSRF_SECRET: 'SOME_CSRF_SECRET_EG_AUTH'
+      FRONTEND_URL: http://localhost:8080
+      NODE_ENV: development
+      
+  eg-auth:
+    build:
+      context: ./eg-auth
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    depends_on:
+      - eg-auth-server
+    environment:
+      VITE_API_URL: http://localhost:3000
+      
+
+volumes:
+  mongo-data:
