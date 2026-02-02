@@ -40,7 +40,7 @@ jobs:
       run: pnpm install --frozen-lockfile
       
     - name: Lint
-      run: pnpm lint
+      run: pnpm exec eslint "{src,apps,libs,test}/**/*.ts"
       
     - name: Unit Tests
       run: pnpm test
