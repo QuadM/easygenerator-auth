@@ -26,8 +26,6 @@ export function useAuth() {
   // Create service instance once per component lifecycle
   const authService = useMemo(() => {
     const config = createAuthConfig();
-    console.log('[Auth] Config:', config);
-    console.log('[Auth] Env VITE_API_URL:', import.meta.env.VITE_API_URL);
     const httpClient = new AxiosHttpClient(config);
     return new AuthService(httpClient);
   }, []);
