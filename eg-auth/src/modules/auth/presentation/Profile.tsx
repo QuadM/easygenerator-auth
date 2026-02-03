@@ -37,11 +37,15 @@ export default function Profile() {
               <div className="flex flex-col items-start grow w-full gap-6">
                 <div className="flex flex-col items-start grow w-full gap-2">
                  <h2>ID</h2>
-                 <h3>{profile.data?.id}</h3>
+                 <b>{profile.data?.id}</b>
+                </div>
+                <div className="flex flex-col items-start grow w-full gap-2">
+                 <h2>Username</h2>
+                 <b>{profile.data?.username}</b>
                 </div>
                 <div className="flex flex-col items-start grow w-full gap-2">
                  <h2>Email</h2>
-                 <h3>{profile.data?.email}</h3>
+                 <b>{profile.data?.email}</b>
                 </div>
               </div>
             }

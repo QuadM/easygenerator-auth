@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { signupSchema } from "../domain/schemas";
 import { Label } from "@/components/ui/label";
@@ -11,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,7 +21,8 @@ import { toast } from "sonner";
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignUp() {
-  const { signup } = useAuth();
+  const { signup, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -30,6 +32,12 @@ export default function SignUp() {
     resolver: zodResolver(signupSchema),
     mode: "onChange",
   });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate({ to: "/me" });
+    }
+  }, [isAuthenticated, navigate]);
 
   const onSubmit = (data: SignupFormValues) => {
     signup.mutate(data, {

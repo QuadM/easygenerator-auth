@@ -11,6 +11,7 @@ import * as argon2 from 'argon2';
 interface UserWithoutPassword {
   id: string;
   email: string;
+  username: string;
 }
 
 @Injectable()
@@ -21,6 +22,10 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<User | null> {
     return await this.prisma.user.findUnique({ where: { email } });
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    return await this.prisma.user.findUnique({ where: { username } });
   }
 
   async findById(id: string): Promise<UserWithoutPassword> {
@@ -39,11 +44,19 @@ export class UsersService {
     username: string,
     password: string,
   ): Promise<UserWithoutPassword> {
-    const exists = await this.findByEmail(email);
-    if (exists) {
-      this.logger.warn(`Attempt to create duplicate user: ${email}`);
+    const emailExists = await this.findByEmail(email);
+    if (emailExists) {
+      this.logger.warn(`Attempt to create duplicate user with email: ${email}`);
       throw new ConflictException(
         'An account with that email address already exists.',
+      );
+    }
+
+    const usernameExists = await this.findByUsername(username);
+    if (usernameExists) {
+      this.logger.warn(`Attempt to create duplicate user with username: ${username}`);
+      throw new ConflictException(
+        'An account with that username already exists.',
       );
     }
 
