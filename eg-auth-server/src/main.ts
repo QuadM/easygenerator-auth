@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/http-exception.filter';
 import { ConfigService } from './common/config.service';
@@ -17,6 +18,9 @@ async function bootstrap() {
 
   // Enable global prefix
   app.setGlobalPrefix('api');
+
+  // Security Middleware
+  app.use(helmet());
 
   // Enable CORS for frontend integration
   app.enableCors({
